@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 9 9">
+  <g id="Group_3" data-name="Group 3" transform="translate(-635 -1226)">
+    <circle id="Ellipse_3" data-name="Ellipse 3" cx="4.5" cy="4.5" r="4.5" transform="translate(635 1226)" fill="#5087f3"/>
+    <g id="Group_2" data-name="Group 2">
+      <g id="SvgjsG1013" transform="translate(625 1225)">
+        <g id="Group_1" data-name="Group 1" transform="translate(10 1)">
+          <path id="Path_1" data-name="Path 1" d="M4.5,0A4.5,4.5,0,1,0,9,4.5,4.5,4.5,0,0,0,4.5,0ZM3.375,2.25,6.75,4.5,3.375,6.75Z" fill="#cecece"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

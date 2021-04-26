@@ -1,0 +1,29 @@
+.shape-size {
+  height: 30px;
+  width: 30px;
+}
+// ! Shapes [square by default]
+.circle {
+  border-radius: 10rem;
+}
+.triangle {
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%, 50% 0%);
+}
+
+// ! colors
+
+.green {
+  background-color: limegreen;
+}
+.blue {
+  background-color: rgb(25, 111, 250);
+}
+.yellow {
+  background-color: rgb(219, 202, 10);
+}
+.purple {
+  background-color: rgb(174, 34, 174);
+}
+.red {
+  background-color: rgb(243, 96, 79);
+}
