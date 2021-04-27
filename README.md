@@ -12,3 +12,8 @@ Please run `npm i && npm start` for testing the application.
 ## Issues.
 
 1. Play / pause only works initially. After updating the BPM, it glitches. There is an issue with logic somewhere.
+
+## Requirements.
+
+1. User's mic will be on and can sing along.
+1. 

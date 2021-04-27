@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   menuItem: { fontSize: "16px", border: "none" },
 }));
 // ***************************************************************************
-function DropDown({ defaultNote }) {
+function DropDown({ defaultNote, position }) {
   // ! for dropdown
   const classes = useStyles();
   // ! state for notes object
