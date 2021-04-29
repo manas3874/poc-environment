@@ -20,11 +20,12 @@ const useStyles = makeStyles((theme) => ({
   menuItem: { fontSize: "16px", border: "none" },
 }));
 // ***************************************************************************
-function DropDown({ defaultNote, position }) {
+function DropDown({ defaultNote, defaultFreq, position, makeChange }) {
   // ! for dropdown
   const classes = useStyles();
   // ! state for notes object
   const [note, setNote] = useState(defaultNote);
+  const [freq, setFreq] = useState(defaultFreq);
   // ! Shape control
   const [shapeName, setShapeName] = useState("");
   const [shapeColor, setShapeColor] = useState("");
@@ -32,30 +33,44 @@ function DropDown({ defaultNote, position }) {
     switch (note) {
       case "Do":
         setShapeName("square");
+        setFreq("C1");
+        makeChange(position, "C1");
         setShapeColor("blue");
         break;
       case "Re":
         setShapeName("circle");
+        setFreq("Db3");
+        makeChange(position, "Db3");
         setShapeColor("purple");
         break;
       case "Mi":
         setShapeName("square");
+        setFreq("E1");
+        makeChange(position, "E1");
         setShapeColor("yellow");
         break;
       case "Fa":
         setShapeName("triangle");
+        setFreq("F#3");
+        makeChange(position, "F#3");
         setShapeColor("green");
         break;
       case "So":
         setShapeName("circle");
+        setFreq("G1");
+        makeChange(position, "G1");
         setShapeColor("blue");
         break;
       case "La":
         setShapeName("triangle");
+        setFreq("A2");
+        makeChange(position, "A2");
         setShapeColor("red");
         break;
       case "Ti":
         setShapeName("square");
+        setFreq("B2");
+        makeChange(position, "B2");
         setShapeColor("green");
         break;
 
