@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./componentStyles/Sequencer.scss";
 import * as Tone from "tone";
-// ! material UI imports
-import { makeStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 // ! assets import
 import play from "../assets/play-button.svg";
 import pause from "../assets/pause-button.svg";
@@ -15,44 +8,7 @@ import pause from "../assets/pause-button.svg";
 import gsap from "gsap";
 import Draggable from "gsap/Draggable";
 gsap.registerPlugin(Draggable);
-// ***************************************************************************
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-  label: { fontSize: "20px", transform: "translateY(-10px)" },
-  menuItem: { fontSize: "16px", border: "none" },
-}));
-// ***************************************************************************
 function Sequencer() {
-  // ! changing the synths from dropdown
-  //   const [synth, setSynth] = useState("Membrane");
-  //   const updateSynth = (event, track) => {
-  //     console.log(event.target.value);
-  //     setSynth(event.target.value);
-  //     Tone.Transport.stop(0);
-  //     switch (event.target.value) {
-  //       case "Membrane":
-  //         synths[track] = new Tone.MembraneSynth().toDestination();
-  //         break;
-  //       case "Pluck":
-  //         synths[track] = new Tone.PluckSynth().toDestination();
-  //         break;
-  //       case "Metal":
-  //         synths[track] = new Tone.MetalSynth().toDestination();
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //     console.log(synths);
-  //     // Tone.Transport.scheduleRepeat(repeat, "4n");
-  //     Tone.Transport.start();
-  //   };
-  //   const classes = useStyles();
   // ! GSAP stuff
   const myTweenRef = useRef(null);
   useEffect(() => {
@@ -104,13 +60,44 @@ function Sequencer() {
   // ! ToneJS
   let synths,
     step,
-    index = 0;
+    index = 0,
+    chunks = [];
   Tone.Transport.bpm.value = bpm;
+  // ! Recorder
+  const recorderRef = useRef(null);
+  const destRef = useRef(null);
+  useEffect(() => {
+    const actx = Tone.context;
+    destRef.current = actx.createMediaStreamDestination();
+    recorderRef.current = new MediaRecorder(destRef.current.stream);
+  }, []);
+  // recorder.start();
+  let stopFunc = () => {
+    console.log("stopping");
+    recorderRef.current.stop();
+  };
+  // ! Player
   const playSound = (synthsArr) => {
+    recorderRef.current.start();
     synths = synthsArr;
-    synths.forEach((synth) => (synth.volume.value = -10));
+    synths.forEach((synth) => {
+      synth.toDestination();
+      synth.volume.value = -10;
+    });
     Tone.Transport.scheduleRepeat(repeat, "4n");
+    recorderRef.current.ondataavailable = (evt) => chunks.push(evt.data);
+    recorderRef.current.onstop = (evt) => {
+      console.log(chunks);
+      let blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.download = "recording.mp3";
+      anchor.href = url;
+      anchor.click();
+    };
+
     Tone.Transport.start();
+    console.dir(recorderRef.current);
   };
 
   // ! for metronome application
@@ -125,6 +112,44 @@ function Sequencer() {
           "4n",
           time
         );
+        switch (i + 1) {
+          case 1:
+            visualizerTimeline1.current.to(visualizer1.current, {
+              x: 0,
+              scaleX: 1.5,
+              // width: 100,
+              duration: 0.1,
+            });
+            visualizerTimeline1.current.to(visualizer1.current, {
+              x: 1,
+              scale: 1,
+              // width: 20,
+              duration: 0.1,
+            });
+            break;
+          case 2:
+            visualizerTimeline2.current.to(visualizer2.current, {
+              x: 50,
+              duration: 0.2,
+            });
+            visualizerTimeline2.current.to(visualizer2.current, {
+              x: 0,
+              duration: 0.2,
+            });
+            break;
+          case 3:
+            visualizerTimeline3.current.to(visualizer3.current, {
+              rotate: 180,
+              duration: 0.2,
+            });
+            visualizerTimeline3.current.to(visualizer3.current, {
+              rotate: 360,
+              duration: 0.2,
+            });
+            break;
+          default:
+            break;
+        }
       }
     }
     index++;
@@ -144,34 +169,30 @@ function Sequencer() {
     myTweenRef.current.pause();
     Tone.Transport.pause();
   };
-
+  // ! Refs for visualization
+  const visualizer1 = useRef(null);
+  const visualizer2 = useRef(null);
+  const visualizer3 = useRef(null);
+  const visualizerTimeline1 = useRef(null);
+  const visualizerTimeline2 = useRef(null);
+  const visualizerTimeline3 = useRef(null);
+  useEffect(() => {
+    visualizerTimeline1.current = gsap.timeline();
+    visualizerTimeline2.current = gsap.timeline();
+    visualizerTimeline3.current = gsap.timeline();
+  }, []);
   return (
     <>
       <div className="sequencer-wrapper">
         <h1>Step Sequencer POC</h1>
         <div className="notes-grid-parent">
           <div className="sequence-slider" ref={seekerRef}></div>
+          <div className="visualizer-wrapper">
+            <div className="visualizer-1 visualizer" ref={visualizer1}></div>
+            <div className="visualizer-2 visualizer" ref={visualizer2}></div>
+            <div className="visualizer-3 visualizer" ref={visualizer3}></div>
+          </div>
           <div className="notes-grid" ref={gridRef1}>
-            {/* <FormControl className={classes.formControl}>
-            <Select
-              labelId="demo-simple-select-placeholder-label-label"
-              id="demo-simple-select-placeholder-label"
-              value={synth}
-              onChange={(event) => updateSynth(event, 0)}
-              displayEmpty
-              className={classes.menuItem}
-            >
-              <MenuItem value="Membrane" className={classes.menuItem}>
-                Membrane
-              </MenuItem>
-              <MenuItem value="Pluck" className={classes.menuItem}>
-                Pluck
-              </MenuItem>
-              <MenuItem value="Metal" className={classes.menuItem}>
-                Metal
-              </MenuItem>
-            </Select>
-          </FormControl> */}
             <input type="checkbox" className="note-checkbox" name="A1" />
             <input type="checkbox" className="note-checkbox" name="A1" />
             <input type="checkbox" className="note-checkbox" name="A1" />
@@ -240,31 +261,17 @@ function Sequencer() {
         onClick={() => {
           myTweenRef.current.play();
           setIsPlaying(true);
+
           playSound([
-            new Tone.MembraneSynth().toDestination(),
-            new Tone.MembraneSynth().toDestination(),
-            new Tone.MembraneSynth().toDestination(),
+            new Tone.MembraneSynth().connect(destRef.current),
+            new Tone.MembraneSynth().connect(destRef.current),
+            new Tone.MembraneSynth().connect(destRef.current),
           ]);
         }}
       >
         start
       </button>
-      {/* <button
-        onClick={() => {
-          myTweenRef.current.play();
-          Tone.Transport.start();
-        }}
-      >
-        Play
-      </button>
-      <button
-        onClick={() => {
-          myTweenRef.current.pause();
-          Tone.Transport.pause();
-        }}
-      >
-        Pause
-      </button> */}
+      <button onClick={stopFunc}>Stop recording</button>
     </>
   );
 }

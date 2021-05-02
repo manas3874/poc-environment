@@ -28,6 +28,35 @@
       background-color: red;
       z-index: 3;
     }
+    .visualizer-wrapper {
+      position: absolute;
+      right: -1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      height: 60%;
+      width: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      .visualizer {
+        height: 3rem;
+        width: 3rem;
+        &-1 {
+          background-color: rgb(0, 149, 255);
+        }
+        &-2 {
+          background-color: limegreen;
+          border-radius: 3rem;
+        }
+        &-3 {
+          background-color: salmon;
+          clip-path: polygon(50% 0%, 100% 100%, 0% 100%, 50% 0%);
+          transform: translateY(-0.4rem);
+        }
+      }
+    }
   }
   .notes-grid {
     width: 100%;
